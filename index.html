@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análise de Custos Bimestral | PP Homo & PP Copo</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #00549A;
+            --braskem-color: #FFC107;
+            --accent-green: #28a745;
+            --accent-red: #E74C3C;
+            --white: #FFFFFF;
+            --light-bg: #F8F9FA;
+            --dark-text: #212529;
+            --light-text: #6c757d;
+            --border-color: #dee2e6;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+            margin: 0;
+            padding: 25px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: auto;
+        }
+        .card {
+            background-color: var(--white);
+            padding: 25px 30px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 25px;
+        }
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 4px solid var(--primary-blue);
+            padding-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        header .logo {
+            max-height: 70px;
+        }
+        header .title-group {
+            text-align: right;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+        header h2 {
+            margin: 5px 0 0;
+            font-size: 1.2rem;
+            font-weight: 400;
+            color: var(--light-text);
+        }
+        .section-title {
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: var(--dark-text);
+            margin-bottom: 20px;
+            margin-top: 10px;
+        }
+        .controls-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 30px;
+            padding: 15px;
+            background-color: var(--light-bg);
+            border-radius: 8px;
+        }
+        .control-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .control-group label {
+            font-weight: 600;
+        }
+        .control-btn {
+            padding: 8px 16px;
+            font-size: 1rem;
+            font-weight: 500;
+            border: 1px solid var(--border-color);
+            background-color: var(--white);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .control-btn.active {
+            background-color: var(--primary-blue);
+            color: var(--white);
+            border-color: var(--primary-blue);
+        }
+        .dolar-display {
+            font-weight: 500;
+            font-size: 1rem;
+            text-align: right;
+        }
+        .chart-container {
+            width: 100%;
+            height: 450px;
+        }
+        .braskem-highlight {
+            font-weight: bold;
+            color: var(--braskem-color);
+        }
+        .grid-3-cols {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .analysis-card {
+            background-color: var(--light-bg);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .analysis-card h3 {
+            margin: 0 0 10px 0;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--light-text);
+        }
+        .analysis-card .value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--dark-text);
+        }
+        .analysis-card .value.positive { color: var(--accent-red); }
+        .analysis-card .value.negative { color: var(--accent-green); }
+        .analysis-card .supplier {
+            font-size: 1rem;
+            font-weight: 400;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 1rem;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        thead th {
+            font-weight: 600;
+            color: var(--primary-blue);
+        }
+        tbody tr:nth-child(even) { background-color: var(--light-bg); }
+        .saving-positive { color: var(--accent-red); }
+        .saving-negative { color: var(--accent-green); font-weight: 600; }
+        footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.9rem;
+            color: var(--light-text);
+            text-align: center;
+        }
+        footer p { margin: 10px 0 0 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <header>
+                <img src="https://empresas.tramontina.com.br/webruntime/org-asset/ef4c16ca4b/resource/0818c0000030FTI" alt="Logo Tramontina" class="logo">
+                <div class="title-group">
+                    <h1>Acompanhamento de custos bimestral PP homo & PP copo</h1>
+                    <h2>Julho e agosto de 2025</h2>
+                </div>
+            </header>
+        </div>
+        
+        <div class="card">
+            <div class="controls-container">
+                <div class="control-group">
+                    <label>Selecione o Produto:</label>
+                    <button class="control-btn active" data-product="pp_homo">PP Homo</button>
+                    <button class="control-btn" data-product="pp_copo">PP Copo</button>
+                </div>
+                <div class="dolar-display" id="dolar-display"></div>
+            </div>
+
+            <h2 class="section-title" id="chart-title"></h2>
+            <div class="chart-container">
+                <canvas id="costChart"></canvas>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 class="section-title">Análise Comparativa vs. <span class="braskem-highlight">Braskem</span></h2>
+            <div class="grid-3-cols">
+                <div class="analysis-card">
+                    <h3>Custo <span class="braskem-highlight">Braskem</span> (Agosto)</h3>
+                    <p class="value" id="braskem-cost">R$ 0,00</p>
+                </div>
+                <div class="analysis-card">
+                    <h3>Melhor Custo (Agosto)</h3>
+                    <p class="value" id="best-cost">R$ 0,00</p>
+                    <p class="supplier" id="best-supplier">--</p>
+                </div>
+                <div class="analysis-card">
+                    <h3>Pior Custo (Agosto)</h3>
+                    <p class="value" id="worst-cost">R$ 0,00</p>
+                    <p class="supplier" id="worst-supplier">--</p>
+                </div>
+            </div>
+             <div class="grid-2-cols" style="margin-top: 20px;">
+                <div class="analysis-card">
+                    <h3><span class="braskem-highlight">Braskem</span> vs. Melhor Custo</h3>
+                    <p class="value positive" id="braskem-vs-best">--</p>
+                </div>
+                 <div class="analysis-card">
+                    <h3><span class="braskem-highlight">Braskem</span> vs. Pior Custo</h3>
+                    <p class="value negative" id="braskem-vs-worst">--</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 class="section-title">Projeção de Custo Evitado (Volume: 500.000 kg)</h2>
+            <p>Esta tabela calcula a economia potencial ao optar por outros fornecedores em comparação com o preço médio bimestral da <span class="braskem-highlight">Braskem</span>.</p>
+            <table id="saving-table">
+                <thead><tr><th>Fornecedor</th><th>Custo Evitado (R$)</th><th>Custo Evitado (%)</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <footer>
+            <p>Elaborado por: Ronier Cezar dos Santos</p>
+            <p class="validation-text">Dados validados pelo departamento de compras e importação</p>
+        </footer>
+    </div>
+
+    <script>
+        const costData = {
+            dolar: { jul: 5.52, ago: 5.44 },
+            suppliers: [
+                { name: 'Braskem (BR)', pp_homo_jul: 7.78, pp_homo_ago: 7.50, pp_copo_jul: 8.08, pp_copo_ago: 7.90 },
+                { name: 'LYB (SAU)', pp_homo_jul: 7.94, pp_homo_ago: 7.82, pp_copo_jul: 8.63, pp_copo_ago: 8.50 },
+                { name: 'Borouge (EA)', pp_homo_jul: 7.81, pp_homo_ago: 7.69, pp_copo_jul: 8.49, pp_copo_ago: 8.36 },
+                { name: 'Essentia (COL)', pp_homo_jul: 7.56, pp_homo_ago: 7.43, pp_copo_jul: 8.07, pp_copo_ago: 8.07 },
+                { name: 'Exxon (EUA)', pp_homo_jul: null, pp_homo_ago: null, pp_copo_jul: 9.14, pp_copo_ago: 9.14 }
+            ]
+        };
+
+        let currentProduct = 'pp_homo';
+        let costChart = null;
+        const formatBRL = (value) => value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+        function updateDashboard() {
+            // Atualiza botões
+            document.querySelectorAll('.control-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.product === currentProduct);
+            });
+            
+            // Atualiza Dólar
+            const dolarText = `Dólar médio: Julho (${formatBRL(costData.dolar.jul)}) / Agosto (${formatBRL(costData.dolar.ago)})`;
+            document.getElementById('dolar-display').innerText = dolarText;
+
+            // Filtra fornecedores
+            const filteredSuppliers = costData.suppliers.filter(s => s[`${currentProduct}_jul`] !== null);
+            const braskem = costData.suppliers.find(s => s.name.startsWith('Braskem'));
+
+            // Atualiza Título do Gráfico
+            const productTitle = currentProduct === 'pp_homo' ? 'PP Homo' : 'PP Copo';
+            document.getElementById('chart-title').innerHTML = `Curva de Custo por Fornecedor (${productTitle})<br><span style="font-size: 1rem; color: var(--light-text); font-weight: 400;">Valores em R$/KG, peso líquido e sem encargos</span>`;
+
+            // Atualiza Gráfico
+            const chartCtx = document.getElementById('costChart').getContext('2d');
+            const chartDatasets = filteredSuppliers.map((s, i) => ({
+                label: s.name,
+                data: [s[`${currentProduct}_jul`], s[`${currentProduct}_ago`]],
+                borderColor: s.name.startsWith('Braskem') ? 'var(--braskem-color)' : `hsl(${200 + i*30}, 70%, 50%)`,
+                borderWidth: s.name.startsWith('Braskem') ? 4 : 2,
+                tension: 0.1,
+                fill: false
+            }));
+            if (costChart) costChart.destroy();
+            costChart = new Chart(chartCtx, {
+                type: 'line',
+                data: { labels: ['Julho', 'Agosto'], datasets: chartDatasets },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+            });
+
+            // Análise Benchmark Braskem
+            const pricesAgo = filteredSuppliers.map(s => s[`${currentProduct}_ago`]).sort((a,b) => a-b);
+            const bestPriceAgo = pricesAgo[0];
+            const worstPriceAgo = pricesAgo[pricesAgo.length-1];
+            const braskemPriceAgo = braskem[`${currentProduct}_ago`];
+            const bestSupplier = filteredSuppliers.find(s => s[`${currentProduct}_ago`] === bestPriceAgo);
+            const worstSupplier = filteredSuppliers.find(s => s[`${currentProduct}_ago`] === worstPriceAgo);
+
+            document.getElementById('braskem-cost').innerText = formatBRL(braskemPriceAgo);
+            document.getElementById('best-cost').innerText = formatBRL(bestPriceAgo);
+            document.getElementById('best-supplier').innerText = bestSupplier.name;
+            document.getElementById('worst-cost').innerText = formatBRL(worstPriceAgo);
+            document.getElementById('worst-supplier').innerText = worstSupplier.name;
+
+            const vsBestPerc = ((braskemPriceAgo / bestPriceAgo) - 1) * 100;
+            const vsWorstPerc = ((braskemPriceAgo / worstPriceAgo) - 1) * 100;
+            document.getElementById('braskem-vs-best').innerText = `+${vsBestPerc.toFixed(1)}%`;
+            document.getElementById('braskem-vs-worst').innerText = `${vsWorstPerc.toFixed(1)}%`;
+
+
+            // Projeção Custo Evitado
+            const savingTableBody = document.querySelector('#saving-table tbody');
+            savingTableBody.innerHTML = '';
+            const braskemAvgPrice = (braskem[`${currentProduct}_jul`] + braskem[`${currentProduct}_ago`]) / 2;
+
+            filteredSuppliers.forEach(s => {
+                if(s.name === braskem.name) return; // Não compara Braskem com ela mesma
+                const supplierAvgPrice = (s[`${currentProduct}_jul`] + s[`${currentProduct}_ago`]) / 2;
+                const savingPerKg = braskemAvgPrice - supplierAvgPrice;
+                const totalSaving = savingPerKg * 500000;
+                const percentSaving = (savingPerKg / braskemAvgPrice) * 100;
+
+                const savingClass = totalSaving > 0 ? 'saving-negative' : 'saving-positive';
+                const sign = totalSaving > 0 ? '+' : '';
+
+                const row = `<tr>
+                    <td>${s.name}</td>
+                    <td class="${savingClass}">${formatBRL(totalSaving)}</td>
+                    <td class="${savingClass}">${sign}${percentSaving.toFixed(1)}%</td>
+                </tr>`;
+                savingTableBody.innerHTML += row;
+            });
+        }
+
+        document.querySelectorAll('.control-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                currentProduct = btn.dataset.product;
+                updateDashboard();
+            });
+        });
+
+        window.onload = () => updateDashboard();
+    </script>
+</body>
+</html>
